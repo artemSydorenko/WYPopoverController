@@ -281,15 +281,6 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     swizzle = class_getInstanceMethod(self, @selector(sizzled_setContentSizeForViewInPopover:));
     method_exchangeImplementations(original, swizzle);
 #pragma clang diagnostic pop
-    
-#ifdef WY_BASE_SDK_7_ENABLED
-    original = class_getInstanceMethod(self, @selector(setPreferredContentSize:));
-    swizzle = class_getInstanceMethod(self, @selector(sizzled_setPreferredContentSize:));
-    
-    if (original != NULL) {
-        method_exchangeImplementations(original, swizzle);
-    }
-#endif
 }
 
 - (void)sizzled_setContentSizeForViewInPopover:(CGSize)aSize
@@ -302,20 +293,6 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 #pragma GCC diagnostic ignored "-Wdeprecated"
         [self.navigationController setContentSizeForViewInPopover:aSize];
 #pragma clang diagnostic pop
-    }
-}
-
-- (void)sizzled_setPreferredContentSize:(CGSize)aSize
-{
-    [self sizzled_setPreferredContentSize:aSize];
-    
-    if ([self isKindOfClass:[UINavigationController class]] == NO && self.navigationController != nil)
-    {
-#ifdef WY_BASE_SDK_7_ENABLED
-        if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
-            [self.navigationController setPreferredContentSize:aSize];
-        }
-#endif
     }
 }
 
